@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title> Snake Game </title>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="snake.js"></script>
+    <style>
+      div#snakeGame {
+        margin: 0 auto;
+        width: 500px;
+        height: 500px;
+        background-color: #FABADA;
+      }
+      div.square {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        background-color: #0000FF;
+      }
+    </style>
+</head>
+
+<body>
+
+    <div id="snakeGame"> </div>
+
+    <script type="text/javascript">
+      document.onkeydown = checkKey;
+      function checkKey(e) {
+          e = e || window.event;
+          if (e.keyCode == '38') { // up arrow
+            snake.direction = 'u';
+          }
+          else if (e.keyCode == '40') { // down arrow
+            snake.direction = 'd';
+          }
+          else if (e.keyCode == '37') { // left arrow
+            snake.direction = 'l';
+          }
+          else if (e.keyCode == '39') { // right arrow
+            snake.direction = 'r';
+          }
+          snake.draw();
+      }
+      window.onload = function () {
+        scene.init(snake, 50, 'snakeGame');
+        setInterval(function() {
+          scene.draw();
+          snake.move();
+          if (snake.head().x===9) snake.direction='l';
+          if (snake.head().x===0) snake.direction='r';
+        }, 500);
+      }
+    </script>
+</body>
+</html>
