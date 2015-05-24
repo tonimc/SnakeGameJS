@@ -1,11 +1,14 @@
 
-var snake = {
+var Snake = Class.extend({
   age : 1,
   food : 0,
 
   body : [{x:0, y:9}],
 
   direction : 'r', //'r': right, 'l': lefft, 'u': up, 'd': down
+
+  init : function() {
+  },
 
   move : function() {
     var head = {x : this.head().x, y : this.head().y},
@@ -29,6 +32,17 @@ var snake = {
     this.body = newBody;
   },
 
+  checkColision : function(x,y) {
+    y = (x instanceof Object)?x.y:y;
+    x = (x instanceof Object)?x.x:x;
+    for(var i in this.body) {
+      if(this.body[i].x == x && this.body[i].y == y) {
+        return true;
+      }
+    }
+    return false;
+  },
+
   eat : function() {
     this.food++;
     if (this.food%this.age === 0) {
@@ -41,35 +55,98 @@ var snake = {
     return this.body[0];
   }
 
-};
+});
 
-var scene = {
-  tileSize : 50,
+var GameScene = Scene.extend({
   snake : null,
-  container : null,
+  maxXY : 0,
+  sizeOfTiles : 25,
+  food : null,
 
-  init : function(snake, size, id) {
+  init : function(id, size, snake) {
+    this._super( id, size);
     this.snake = snake;
-    this.tileSize = size;
-    this.container = document.getElementById(id);
+    this.maxXY = parseInt(this.size/this.sizeOfTiles)-1;
   },
 
-  reset : function() {
-    this.container.innerHTML = '';
-  },
-
-  createTile : function(x,y) {
-    var left = parseInt(this.tileSize) * parseInt(x),
-        top = parseInt(this.tileSize) * parseInt(y);
-    return '<div class="square" style="left:'+left+'px; top:'+top+'px" />';
+  createTile : function(x,y, type) {
+    var tileSize = this.sizeOfTiles,
+        left = tileSize * parseInt(x),
+        top = tileSize * parseInt(y);
+    return '<div class="tile '+type+'" style="left:'+left+'px; top:'+top+'px;'
+            +' width:'+tileSize+'px; height:'+tileSize+'px;"></div>';
   },
 
   draw : function() {
-    var scene = '';
-    for(var i in this.snake.body) {
-      var tile = this.snake.body[i];
-      scene += this.createTile(tile.x, tile.y);
+    var scene = '',
+        i,tile;
+
+    for(i in this.snake.body) {
+      tile = this.snake.body[i];
+      scene += this.createTile(tile.x, tile.y, 'snake');
     }
+    scene += this.createTile(this.food.x, this.food.y, 'food');
     this.container.innerHTML = scene;
+
   }
-};
+});
+
+var GameState = State.extend({
+  snake : null,
+  food : null,
+
+  init : function() {
+    this._super(500);
+    this.snake = new Snake();
+    this.scene = new GameScene('snakeGame', 500, this.snake);
+  },
+
+  keyEvents : function(e, state) {
+    e = e || window.event;
+    if (e.keyCode == '38') { // up arrow
+      state.snake.direction = 'u';
+    }
+    else if (e.keyCode == '40') { // down arrow
+      state.snake.direction = 'd';
+    }
+    else if (e.keyCode == '37') { // left arrow
+      state.snake.direction = 'l';
+    }
+    else if (e.keyCode == '39') { // right arrow
+      state.snake.direction = 'r';
+    }
+    else if (e.keyCode == 0 || e.keyCode == 32) {
+      state.stop();
+    }
+  },
+
+  update : function() {
+    this.snake.move();
+    if (this.snake.checkColision(this.food)) {
+      this.snake.eat();
+      this.food = null;
+    }
+    if (this.food==null) {
+      this.scene.food = this.addFood();
+    }
+    if (this.snake.head().x===this.scene.maxXY) this.snake.direction='l';
+    if (this.snake.head().x===0) this.snake.direction='r';
+    if (this.snake.head().y===this.scene.maxXY) this.snake.direction='u';
+    if (this.snake.head().y===0) this.snake.direction='d';
+  },
+
+  addFood : function() {
+    var x = 0,
+        y = 0,
+        colision = true;
+
+    while(colision) {
+      x = Math.floor(Math.random() * (this.scene.maxXY));
+      y = Math.floor(Math.random() * (this.scene.maxXY));
+      colision = this.snake.checkColision(x,y);
+    }
+    this.food = { 'x' : x, 'y' : y };
+    return this.food;
+  }
+
+});
