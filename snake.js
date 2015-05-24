@@ -63,8 +63,8 @@ var GameScene = Scene.extend({
   sizeOfTiles : 25,
   food : null,
 
-  init : function(id, size, snake) {
-    this._super( id, size);
+  init : function(id, size, snake, updateTime) {
+    this._super( id, size, updateTime);
     this.snake = snake;
     this.maxXY = parseInt(this.size/this.sizeOfTiles)-1;
   },
@@ -96,9 +96,9 @@ var GameState = State.extend({
   food : null,
 
   init : function() {
-    this._super(500);
+    this._super(200);
     this.snake = new Snake();
-    this.scene = new GameScene('snakeGame', 500, this.snake);
+    this.scene = new GameScene('snakeGame', 500, this.snake, 200);
   },
 
   keyEvents : function(e, state) {
@@ -129,10 +129,10 @@ var GameState = State.extend({
     if (this.food==null) {
       this.scene.food = this.addFood();
     }
-    if (this.snake.head().x===this.scene.maxXY) this.snake.direction='l';
-    if (this.snake.head().x===0) this.snake.direction='r';
-    if (this.snake.head().y===this.scene.maxXY) this.snake.direction='u';
-    if (this.snake.head().y===0) this.snake.direction='d';
+    if (this.snake.head().x===this.scene.maxXY+1 && this.snake.direction=='r') this.snake.head().x=0;
+    if (this.snake.head().x===-1 && this.snake.direction=='l') this.snake.head().x=this.scene.maxXY;
+    if (this.snake.head().y===this.scene.maxXY+1 && this.snake.direction=='d') this.snake.head().y=0;
+    if (this.snake.head().y===-1 && this.snake.direction=='u') this.snake.head().y=this.scene.maxXY;
   },
 
   addFood : function() {
