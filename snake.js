@@ -104,16 +104,24 @@ var GameState = State.extend({
   keyEvents : function(e, state) {
     e = e || window.event;
     if (e.keyCode == '38') { // up arrow
-      state.snake.direction = 'u';
+      if (state.snake.age==1 || state.snake.direction != 'd') {
+        state.snake.direction = 'u';
+      }
     }
     else if (e.keyCode == '40') { // down arrow
-      state.snake.direction = 'd';
+      if (state.snake.age==1 || state.snake.direction != 'u') {
+        state.snake.direction = 'd';
+      }
     }
     else if (e.keyCode == '37') { // left arrow
-      state.snake.direction = 'l';
+      if (state.snake.age==1 || state.snake.direction != 'r') {
+        state.snake.direction = 'l';
+      }
     }
     else if (e.keyCode == '39') { // right arrow
-      state.snake.direction = 'r';
+      if (state.snake.age==1 || state.snake.direction != 'l') {
+        state.snake.direction = 'r';
+      }
     }
     else if (e.keyCode == 0 || e.keyCode == 32) {
       state.stop();
