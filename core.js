@@ -32,6 +32,7 @@ var State = Class.extend({
   updateTime : 100,
   nextState : null,
   scene : null,
+  isStop : true,
 
   init : function(updateTime) {
     this.updateTime = updateTime || this.updateTime;
@@ -42,6 +43,7 @@ var State = Class.extend({
 
   start : function() {
     var self = this;
+    this.isStop = false;
     this.registerKeyEvents();
     this.updateLoop = setInterval(function() {
       self.update()
@@ -61,6 +63,7 @@ var State = Class.extend({
 
   stop : function() {
     clearInterval(this.updateLoop);
+    this.isStop = true;
     this.scene.stop();
   }
 

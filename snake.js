@@ -124,7 +124,7 @@ var GameState = State.extend({
       }
     }
     else if (e.keyCode == 0 || e.keyCode == 32) {
-      state.stop();
+      if (state.isStop) state.start(); else state.stop();
     }
   },
 
