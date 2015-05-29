@@ -1,8 +1,10 @@
 var Game = Class.extend({
   states : {},
+  htmlContainer : null,
   currentState : null,
 
-  init : function() {
+  init : function(container) {
+    this.htmlContainer = container;
   },
 
   start : function() {
@@ -14,16 +16,16 @@ var Game = Class.extend({
   },
 
   _execState : function(state) {
-    if(states.hasOwnProperty(state)) {
+    if(!this.states.hasOwnProperty(state)) {
       alert("Error: The state '"+state+"' is undefined");
       return;
     }
-    this.currentState = this.states[state];
+    this.currentState = new this.states[state](this.htmlContainer);
     this.currentState.start();
   },
 
-  addState : function(name, state) {
-    states[name] = state;
+  addState : function(key, value) {
+    this.states[key] = value;
   }
 });
 
@@ -48,7 +50,7 @@ var State = Class.extend({
     this.updateLoop = setInterval(function() {
       self.update()
     }, this.updateTime);
-    this.scene.start();
+    //this.scene.start();
   },
 
   registerKeyEvents : function() {
@@ -64,7 +66,7 @@ var State = Class.extend({
   stop : function() {
     clearInterval(this.updateLoop);
     this.isStop = true;
-    this.scene.stop();
+    //this.scene.stop();
   }
 
 });
@@ -87,22 +89,11 @@ var Scene = Class.extend({
     this.container.style.height = this.size+'px';
   },
 
-  start : function() {
-    var self = this;
-    this.drawLoop = setInterval(function() {
-      self.draw();
-    }, this.updateTime);
-  },
-
-  stop : function() {
-    clearInterval(this.drawLoop);
-  },
-
   clean : function() {
     this.container.innerHTML = '';
   },
 
   draw : function() {
-    console.log('dd');
+    console.error('You must override this method');
   }
 });

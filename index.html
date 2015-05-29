@@ -12,14 +12,15 @@
       div#snakeGame {
         position: relative;
         margin: 0 auto;
-        background-color: #FABADA;
+        /*background-color: #FABADA;*/
+        border: 1px solid black;
       }
       div.tile {
         position: absolute;
         background-color: #0000FF;
-        border-radius: 9999px;
-        -moz-border-radius: 9999px;
-        -webkit-border-radius: 9999px;
+        border-radius: 9px;
+        -moz-border-radius: 9px;
+        -webkit-border-radius: 9px;
       }
       div.tile.snake {
         background-color: #00FF00;
@@ -27,17 +28,26 @@
       div.tile.eat {
         background-color: #0000FF;
       }
+      div.score {
+        position: absolute;
+        font-size: 18px;
+      }
+      div.gameOver {
+        position: absolute;
+        font-size: 30px;
+        color: red;
+      }
     </style>
 </head>
 
 <body>
 
-    <div id="snakeGame"> </div>
+    <div id="snakeGame" style="width:500px"> </div>
 
     <script type="text/javascript">
       window.onload = function () {
-        var gameState = new GameState();
-        gameState.start();
+        var game = new SnakeGame('snakeGame');
+        game.start();
       }
     </script>
 </body>
